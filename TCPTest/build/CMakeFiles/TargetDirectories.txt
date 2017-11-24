@@ -1,0 +1,3 @@
+D:/left/GitHub/left-cmake/TCPTest/build/CMakeFiles/TCPTest.dir
+D:/left/GitHub/left-cmake/TCPTest/build/CMakeFiles/ALL_BUILD.dir
+D:/left/GitHub/left-cmake/TCPTest/build/CMakeFiles/ZERO_CHECK.dir
