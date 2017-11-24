@@ -1,0 +1,202 @@
+﻿
+#include "MyCodes.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#ifdef LEFT_OS_WIN
+#include <ShlObj.h>
+#endif
+
+#ifdef LEFT_OS_WIN
+unsigned long long hash_(char const * str) {
+ unsigned long long ret{ basis };
+ while (*str) { ret ^= *str; ret *= prime; str++; }
+ return ret;
+}
+#endif
+
+namespace leftName {
+#ifdef LEFT_OS_WIN
+
+	void ShowLastError() {
+		HLOCAL lpMsgBuf;
+		setlocale(LC_ALL, "");
+		FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL, GetLastError(),
+			MAKELANGID(LANG_CHINESE_SIMPLIFIED, SUBLANG_CHINESE_SIMPLIFIED),
+			(LPTSTR)&lpMsgBuf, 0, NULL);
+		std::wcout << (WCHAR*)lpMsgBuf << std::endl;
+		LocalFree(lpMsgBuf);
+	}
+
+	void GetToken() {
+		if (IsUserAnAdmin())
+			return;
+		else {
+			SHELLEXECUTEINFO sei = { sizeof(SHELLEXECUTEINFO) };
+			sei.lpVerb = TEXT("runas");
+			WCHAR path[512] = { 0 };
+			GetModuleFileName(NULL, (LPSTR)path, sizeof(path));
+			sei.lpFile = (LPSTR)path;
+			sei.nShow = SW_SHOWNORMAL;
+			ShellExecuteEx(&sei);
+			exit(0);
+		}
+	}
+
+	HMODULE GetSelfModuleHandle() {
+		MEMORY_BASIC_INFORMATION mbi;
+		return ((::VirtualQuery(GetSelfModuleHandle, &mbi, sizeof(mbi)) != 0)
+			? (HMODULE)mbi.AllocationBase : NULL);
+	}
+#endif
+	char* GetTimeStr(char* TimeStr, int SizeOfBuf) {
+		time_t tt = time(NULL);
+#ifdef LEFT_OS_WIN
+		tm tmt;
+		tm* t = &tmt;
+		localtime_s(t, &tt);
+#endif
+#ifdef LEFT_OS_LINUX
+		tm* t = localtime(&tt);
+#endif
+		snprintf(TimeStr, SizeOfBuf, "%d-%02d-%02d %02d:%02d:%02d",
+			t->tm_year + 1900,
+			t->tm_mon + 1,
+			t->tm_mday,
+			t->tm_hour,
+			t->tm_min,
+			t->tm_sec);
+		return TimeStr;
+	}
+
+	char* StrToHex(const char* buf, char* Answer, int LenOfAnswer) {
+		if ((int)strlen(buf) % 2 != 0 || (int)strlen(buf) / 2 >= LenOfAnswer)
+			return NULL;
+		for (size_t i = 0; i < strlen(buf) / 2; i++) {
+			if (buf[i * 2] >= '0' && buf[i * 2] <= '9') {
+				Answer[i] = (buf[i * 2] - '0') * 0x10;
+				if (buf[i * 2 + 1] >= '0' && buf[i * 2 + 1] <= '9')
+					Answer[i] += buf[i * 2 + 1] - '0';
+				else if (buf[i * 2 + 1] >= 'A' && buf[i * 2 + 1] <= 'F')
+					Answer[i] += buf[i * 2 + 1] - 'A' + 0xA;
+				else if (buf[i * 2 + 1] >= 'a' && buf[i * 2 + 1] <= 'f')
+					Answer[i] += buf[i * 2 + 1] - 'a' + 0xA;
+				else
+					break;
+			}
+			else if (buf[i * 2] >= 'A' && buf[i * 2] <= 'F') {
+				Answer[i] = (buf[i * 2] - 'A') * 0x10 + 0xA0;
+				if (buf[i * 2 + 1] >= '0' && buf[i * 2 + 1] <= '9')
+					Answer[i] += buf[i * 2 + 1] - '0';
+				else if (buf[i * 2 + 1] >= 'A' && buf[i * 2 + 1] <= 'F')
+					Answer[i] += buf[i * 2 + 1] - 'A' + 0xA;
+				else if (buf[i * 2 + 1] >= 'a' && buf[i * 2 + 1] <= 'f')
+					Answer[i] += buf[i * 2 + 1] - 'a' + 0xA;
+				else
+					break;
+			}
+			else if (buf[i * 2] >= 'a' && buf[i * 2] <= 'f') {
+				Answer[i] = (buf[i * 2] - 'a') * 0x10 + 0xA0;
+				if (buf[i * 2 + 1] >= '0' && buf[i * 2 + 1] <= '9')
+					Answer[i] += buf[i * 2 + 1] - '0';
+				else if (buf[i * 2 + 1] >= 'A' && buf[i * 2 + 1] <= 'F')
+					Answer[i] += buf[i * 2 + 1] - 'A' + 0xA;
+				else if (buf[i * 2 + 1] >= 'a' && buf[i * 2 + 1] <= 'f')
+					Answer[i] += buf[i * 2 + 1] - 'a' + 0xA;
+				else
+					break;
+			}
+			else
+				break;
+			if (i == (strlen(buf) / 2 - 1)) {
+				Answer[LenOfAnswer - 1] = '\0';
+				return Answer;
+			}
+		}
+		return NULL;
+	}
+
+	char* HexToStr(
+		const char* order, int LenOfOrder, char* Answer, int LenOfAnswer) {
+		if (LenOfOrder * 2 >= LenOfAnswer)
+			return NULL;
+		char low, high;
+		for (int i = 0; i < LenOfOrder; i++) {
+			high = (order[i] & 0xF0) / 0x10;
+			if (high >= 0 && high <= 9)
+				Answer[i * 2] = high + '0';
+			else
+				Answer[i * 2] = high + 'A' - 0xA;
+			low = order[i] & 0xF;
+			if (low >= 0 && low <= 9)
+				Answer[i * 2 + 1] = low + '0';
+			else
+				Answer[i * 2 + 1] = low + 'A' - 0xA;
+		}
+		Answer[LenOfOrder * 2] = '\0';
+		return Answer;
+	}
+
+	LEFT_ERROR AnalysisIniFile(char* path, pIniInfo InfoHead) {
+		if (!path || !InfoHead)
+			return LEFT_ERROR_ARGVS;
+		std::ifstream ini(path, std::ios::in);
+		if (!ini.is_open())
+			return LEFT_ERROR_IO_FILEOPEN;
+		char words[MAX_INI_INFO_LEN] = { 0 };
+		while (ini.getline(words, sizeof(words) - 1)) {
+			char* cut = strstr(words, "=");
+			if (!cut) continue;
+			*cut = '\0';
+			char* key = new char[strlen(words) + 1];
+			char* value = new char[strlen(cut + 1) + 1];
+			snprintf(key, strlen(words) + 1, words);
+			snprintf(value, strlen(cut + 1) + 1, cut + 1);
+			pIniInfo p = new IniInfo;
+			InfoHead->Next = p;
+			p->Next = NULL;
+			p->Key = key;
+			p->Value = value;
+			InfoHead = InfoHead->Next;
+			//std::cout << "Check info >>> " << p->Key << ":" << p->Value << std::endl;
+		}
+		ini.close();
+		return LEFT_SUCCESS;
+	}
+
+	LEFT_ERROR GetIniInfo(
+		const char* key, char* value, int valueLen, pIniInfo infoHead) {
+		if (!key || !value || !infoHead)
+			return LEFT_ERROR_ARGVS;
+		pIniInfo info = infoHead;
+		while (info) {
+			if (info->Key && !strcmp(info->Key, key) && info->Value) {
+				if (valueLen <= (int)strlen(info->Value))
+					return LEFT_ERROR_LEN;
+				else {
+					snprintf(value, valueLen, info->Value);
+					return LEFT_SUCCESS;
+				}
+			}
+			info = info->Next;
+		}
+		return LEFT_ERROR_INIINFO_NOFOUND;
+	}
+
+	LEFT_ERROR DelIniInfoList(pIniInfo infoList) {
+		do {
+			if (infoList->Key) delete[] infoList->Key;
+			if (infoList->Value) delete[] infoList->Value;
+			pIniInfo p = infoList->Next;
+			delete[] infoList;
+			infoList = p;
+		} while (infoList);
+		return LEFT_SUCCESS;
+	}
+
+}
+
