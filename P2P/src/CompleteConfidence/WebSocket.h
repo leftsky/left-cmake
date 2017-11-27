@@ -1,4 +1,4 @@
-
+﻿
 
 #ifndef _LEFT_WEBSOCKET_H
 #define _LEFT_WEBSOCKET_H
@@ -22,14 +22,14 @@ typedef struct _WEBSOCKET_HEAD_STRUCT {
 } webSkt, *pwebSkt;
 
 namespace CCWebSocket {
-	char* CountMagicStr(
-		char* AskKey, char* AnswerKey, int Len);
-	char* GetAnswerStr(
-		char* PacketAsk, char* PacketAnswer, int Len);
-	char* DecipheringStr(
-		const char* CipherText, int TextLen, char key[], char* DecipheringStr, int DhStrLen);
-	char* PackageHead(
-		const char* words, int Len, char* Answer, int AnswerLen);
+	char *CountMagicStr(
+		char *AskKey, char *AnswerKey, int Len);
+	char *GetAnswerStr(
+		char *PacketAsk, char *PacketAnswer, int Len);
+	char *DecipheringStr(
+		const char *CipherText, int TextLen, char key[], char *DecipheringStr, int DhStrLen);
+	char *PackageHead(
+		const char *words, int Len, char *Answer, int AnswerLen);
 };
 
 #endif

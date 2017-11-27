@@ -1,7 +1,9 @@
-
+﻿
 #include "MyCodes.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #ifdef LEFT_OS_WIN
 #include <ShlObj.h>
@@ -49,8 +51,13 @@ namespace leftName {
 			? (HMODULE)mbi.AllocationBase : NULL);
 	}
 #endif
-	char* GetTimeStr(char* TimeStr, int SizeOfBuf) {
-		time_t tt = time(NULL);
+
+	char* GetTimeStr(char *TimeStr, int SizeOfBuf) {
+		return GetTimeStr(TimeStr, SizeOfBuf, 0);
+	}
+
+	char* GetTimeStr(char *TimeStr, int SizeOfBuf, int off) {
+		time_t tt = time(NULL) + off;
 #ifdef LEFT_OS_WIN
 		tm tmt;
 		tm* t = &tmt;
@@ -59,7 +66,7 @@ namespace leftName {
 #ifdef LEFT_OS_LINUX
 		tm* t = localtime(&tt);
 #endif
-		snprintf(TimeStr, SizeOfBuf - 1, "%d-%02d-%02d %02d:%02d:%02d",
+		snprintf(TimeStr, SizeOfBuf, "%d-%02d-%02d %02d:%02d:%02d",
 			t->tm_year + 1900,
 			t->tm_mon + 1,
 			t->tm_mday,
@@ -69,8 +76,8 @@ namespace leftName {
 		return TimeStr;
 	}
 
-	char* StrToHex(const char* buf, char* Answer, int LenOfAnswer) {
-		if (strlen(buf) % 2 != 0 || strlen(buf) / 2 >= LenOfAnswer)
+	char* StrToHex(const char *buf, char *Answer, int LenOfAnswer) {
+		if ((int)strlen(buf) % 2 != 0 || (int)strlen(buf) / 2 >= LenOfAnswer)
 			return NULL;
 		for (size_t i = 0; i < strlen(buf) / 2; i++) {
 			if (buf[i * 2] >= '0' && buf[i * 2] <= '9') {
@@ -117,7 +124,7 @@ namespace leftName {
 	}
 
 	char* HexToStr(
-		const char* order, int LenOfOrder, char* Answer, int LenOfAnswer) {
+		const char* order, int LenOfOrder, char *Answer, int LenOfAnswer) {
 		if (LenOfOrder * 2 >= LenOfAnswer)
 			return NULL;
 		char low, high;
@@ -135,6 +142,102 @@ namespace leftName {
 		}
 		Answer[LenOfOrder * 2] = '\0';
 		return Answer;
+	}
+
+	LEFT_ERROR AnalysisIniFile(char *path, pIniInfo InfoHead) {
+		if (!path || !InfoHead)
+			return LEFT_ERROR_ARGVS;
+		std::ifstream ini(path, std::ios::in);
+		if (!ini.is_open())
+			return LEFT_ERROR_IO_FILEOPEN;
+		char words[MAX_INI_INFO_LEN] = { 0 };
+		while (ini.getline(words, sizeof(words) - 1)) {
+			char* cut = strstr(words, "=");
+			if (!cut) continue;
+			*cut = '\0';
+			char* key = new char[strlen(words) + 1];
+			char* value = new char[strlen(cut + 1) + 1];
+			snprintf(key, strlen(words) + 1, words);
+			snprintf(value, strlen(cut + 1) + 1, cut + 1);
+			pIniInfo p = new IniInfo;
+			InfoHead->Next = p;
+			p->Next = NULL;
+			p->Key = key;
+			p->Value = value;
+			InfoHead = InfoHead->Next;
+			//std::cout << "Check info >>> " << p->Key << ":" << p->Value << std::endl;
+		}
+		ini.close();
+		return LEFT_SUCCESS;
+	}
+
+	LEFT_ERROR GetIniInfo(
+		const char *key, char *value, int valueLen, pIniInfo infoHead) {
+		if (!key || !value || !infoHead)
+			return LEFT_ERROR_ARGVS;
+		pIniInfo info = infoHead;
+		while (info) {
+			if (info->Key && !strcmp(info->Key, key) && info->Value) {
+				if (valueLen <= (int)strlen(info->Value))
+					return LEFT_ERROR_LEN;
+				else {
+					snprintf(value, valueLen, info->Value);
+					return LEFT_SUCCESS;
+				}
+			}
+			info = info->Next;
+		}
+		return LEFT_ERROR_INIINFO_NOFOUND;
+	}
+
+	LEFT_ERROR DelIniInfoList(pIniInfo infoList) {
+		do {
+			if (infoList->Key) delete[] infoList->Key;
+			if (infoList->Value) delete[] infoList->Value;
+			pIniInfo p = infoList->Next;
+			delete[] infoList;
+			infoList = p;
+		} while (infoList);
+		return LEFT_SUCCESS;
+	}
+
+	char* getNextOrder(char **buf, char *order, int Len, char SignChar) {
+		char CutStr[2] = { SignChar, '\0' };
+		if ((int)strlen(*buf) <= 1 && (int)strlen(*buf) >= Len)
+			return NULL;
+		char* head = strstr(*buf, CutStr);
+		if (!head || head[1] == '\0') return NULL;
+		char* last = strstr(head + 1, CutStr);
+		if (!last) return NULL;
+		size_t len = last - head;
+		memset(order, 0, Len);
+		memcpy(order, head + 1, len - 1);
+		order[len] = '\0';
+		*buf += len;
+		return order;
+	}
+
+	LEFT_ERROR AddSign(const char *orderBuff, char *buff, char SignChar) {
+		if (orderBuff == NULL || buff == NULL)
+			return LEFT_ERROR_ARGVS;
+		size_t firstLen = strlen(orderBuff);
+		int j = 0;
+		if (orderBuff[j] != SignChar) {
+			buff[j++] = SignChar;
+			firstLen++;
+		}
+		for (size_t i = 0; i < strlen(orderBuff); i++) {
+			while (orderBuff[i + 1] == SignChar && orderBuff[i] == SignChar
+				&& i < strlen(orderBuff) - 1) {
+				i++;
+				firstLen--;
+			}
+			buff[j++] = orderBuff[i];
+		}
+		if (buff[firstLen - 1] != SignChar)
+			buff[firstLen++] = SignChar;
+		buff[firstLen] = '\0';
+		return LEFT_SUCCESS;
 	}
 
 }
