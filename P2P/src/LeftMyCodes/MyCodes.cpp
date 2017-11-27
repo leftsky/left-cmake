@@ -10,9 +10,9 @@
 #endif
 
 unsigned long long hash_(char const * str) {
- unsigned long long ret{ basis };
- while (*str) { ret ^= *str; ret *= prime; str++; }
- return ret;
+	unsigned long long ret{ basis };
+	while (*str) { ret ^= *str; ret *= prime; str++; }
+	return ret;
 }
 
 namespace leftName {

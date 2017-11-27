@@ -1,4 +1,4 @@
-// P2P.cpp: 定义控制台应用程序的入口点。
+﻿// P2P.cpp: 定义控制台应用程序的入口点。
 //
 
 #include <WinSock2.h>
@@ -128,7 +128,7 @@ int client(char* ip, int port) {
 		CltInfo->port = 20000;
 		CURRENCY_StartThread(ListenServer, (LeftThrArgv)CltInfo, Id);
 		{
-			if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, 
+			if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
 				(const char*)&flags, sizeof(int)) == SOCKET_ERROR)
 				cout << "Setsockopt error" << endl;
 			struct sockaddr_in LocalPort;
@@ -143,7 +143,6 @@ int client(char* ip, int port) {
 				break;
 			}
 			//cout << "Bind at " << ip << ":" << port << endl;
-
 
 		}
 		struct sockaddr_in serverAddress;
@@ -208,7 +207,7 @@ int main(int argc, char* argv[]) {
 			return leftP2P::P2PServerMain(ip, port);
 		}
 		else if (mode == USERCLIENT) {
-			cout << "client" << endl; 
+			cout << "client" << endl;
 			return leftP2P::P2PClientMain(ip, port);
 		}
 		else if (mode == P2PSERVER) {

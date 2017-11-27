@@ -75,25 +75,25 @@ char *CCWebSocket::DecipheringStr(
 
 char *CCWebSocket::PackageHead(
 	const char *words, int Len, char *Answer, int AnswerLen) {
-		if (Len < 0)
-			return NULL;
-		memset(Answer, 0, AnswerLen);
-		Answer[Len + 2 + 4 + 8 + 1] = '\0';
-		unsigned int off = 0;
-		Answer[off] = (char)0x81;
-		off++;
-		if (Len < 126) {
-			Answer[off++] = Len;
-		}
-		else if (Len > 125 && Len < 0xFFFF) {
-			Answer[off++] = 126;
-			Answer[off++] = (Len & 0xFF00) / 0x10000;
-			Answer[off++] = (Len & 0xFF);
-		}
-		else if (Len > 0xFFFF) {
-			Answer[off++] = 127;
-		}
-		memcpy(Answer + off, words, Len);
-		return Answer;
+	if (Len < 0)
+		return NULL;
+	memset(Answer, 0, AnswerLen);
+	Answer[Len + 2 + 4 + 8 + 1] = '\0';
+	unsigned int off = 0;
+	Answer[off] = (char)0x81;
+	off++;
+	if (Len < 126) {
+		Answer[off++] = Len;
+	}
+	else if (Len > 125 && Len < 0xFFFF) {
+		Answer[off++] = 126;
+		Answer[off++] = (Len & 0xFF00) / 0x10000;
+		Answer[off++] = (Len & 0xFF);
+	}
+	else if (Len > 0xFFFF) {
+		Answer[off++] = 127;
+	}
+	memcpy(Answer + off, words, Len);
+	return Answer;
 }
 

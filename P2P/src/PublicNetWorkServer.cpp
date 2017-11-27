@@ -3,13 +3,13 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <mysql.h>
+//#include <mysql.h>
 #include <time.h>
 
 #include "CompleteConfidence\Socket.h"
 #include "LeftMyCodes\MyCodes.h"
 
-ServerList Head = {NULL, NULL, 0, NULL};
+ServerList Head = { NULL, NULL, 0, NULL };
 
 namespace {
 	LeftThrReturn NServerConn(LeftThrArgv pCltIf) {
@@ -47,7 +47,7 @@ namespace {
 				std::cout << "Verify right" << std::endl;
 				buf[bytes - 1] = '\0';
 				std::cout << ip << ":" << port << " <<< " << buf << std::endl;
-				if(bytes > 10)
+				if (bytes > 10)
 					leftP2P::RunSocketOrder(buf, bytes - 1, ip, 16, &port);
 				char rt[512];
 				sprintf(rt, "%s:%d", ip, port);
@@ -59,7 +59,7 @@ namespace {
 			}
 			else {
 				std::cout << std::hex << "Read: " << (int)buf[bytes - 1] << std::endl;
-				std::cout << "Verify: " << 
+				std::cout << "Verify: " <<
 					(int)leftP2P::CountVerifyPacket(buf, bytes - 1) << std::endl;
 				std::cout << "bytes: " << bytes << std::dec << std::endl;
 				std::cout << "Verify not" << std::endl;
