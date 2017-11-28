@@ -1,12 +1,12 @@
 
 
-#include <WinSock2.h>
+#include "CompleteConfidence/Socket.h"
 #include <stdio.h>
 #include <iostream>
 #include <time.h>
 
-#include "LeftMyCodes\MyCodes.h"
-#include "CompleteConfidence\Socket.h"
+#include "LeftMyCodes/MyCodes.h"
+#include "easylogging/easylogging++.h"
 
 #include "P2PClient.h"
 
@@ -15,12 +15,12 @@
 int leftP2P::P2PClientMain(char* ip, int port) {
 	do {
 		if (LeftSocket::InitializeSocket()) {
-			std::cout << "InitializeSocket failed." << std::endl;
+			CLOG(INFO, "P2P") << "InitializeSocket failed.";;
 			break;
 		}
 		LeftSokt ClientSocket;
 		if ((ClientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_HOPOPTS)) == INVALID_SOCKET) {
-			std::cout << "Create socket failed." << std::endl;
+			CLOG(INFO, "P2P") << "Create socket failed.";;
 		}
 		struct sockaddr_in serverAddress;
 		memset(&serverAddress, 0, sizeof(sockaddr_in));
@@ -28,32 +28,32 @@ int leftP2P::P2PClientMain(char* ip, int port) {
 		serverAddress.sin_family = AF_INET;
 		serverAddress.sin_port = htons(port);
 		if (connect(ClientSocket, (sockaddr*)&serverAddress, sizeof(serverAddress)) == SOCKET_ERROR) {
-			std::cout << "Connect failed." << std::endl;
+			CLOG(INFO, "P2P") << "Connect failed.";;
 			break;
 		}
 		char buf[4096];
 		memset(buf, 0, sizeof(buf));
 		while (1) {
-			std::cout << ">";
+			CLOG(INFO, "P2P") << ">";
 			std::cin.getline(buf, 4069, '\n');
 			int bufLen = strlen(buf);
 			buf[bufLen] = leftP2P::CountVerifyPacket(buf, bufLen);
-			//std::cout << std::hex << "bufLen: " << bufLen + 1 << std::endl;
-			//std::cout << "Verify: "
-			//	<< (int)leftP2P::CountVerifyPacket(buf, bufLen) << std::dec << std::endl;
+			//CLOG(INFO, "P2P") << std::hex << "bufLen: " << bufLen + 1;;
+			//CLOG(INFO, "P2P") << "Verify: "
+			//	<< (int)leftP2P::CountVerifyPacket(buf, bufLen) << std::dec;;
 			//buf[bufLen + 1] = '\0';
 			if (send(ClientSocket, buf, bufLen + 1, 0) == SOCKET_ERROR) {
-				std::cout << "Send failed" << std::endl;
+				CLOG(INFO, "P2P") << "Send failed";;
 				break;
 			}
 			int bytes;
 			memset(buf, 0, sizeof(buf));
 			if ((bytes = recv(ClientSocket, buf, sizeof(buf), 0)) == SOCKET_ERROR) {
-				std::cout << "Recv failed" << std::endl;
+				CLOG(INFO, "P2P") << "Recv failed";;
 				break;
 			}
 			//buf[bytes] = '\0';
-			std::cout << "<< " << buf << std::endl;
+			CLOG(INFO, "P2P") << "<< " << buf;;
 			leftP2P::GetServerIp(buf, bytes);
 		}
 
@@ -73,13 +73,13 @@ bool leftP2P::GetServerIp(char* buf, int len) {
 	char* sign = strstr(buf, ":");
 	if (!sign) return false;
 	*sign = '\0';
-	sprintf(ip, buf);
+	snprintf(ip, 64, buf);
 	port = atoi(sign + 1);
-	std::cout << "GetServerIp\t" << ip << ":" << port << std::endl;
+	CLOG(INFO, "P2P") << "GetServerIp\t" << ip << ":" << port;;
 	do {
 		LeftSokt ClientSocket;
 		if ((ClientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_HOPOPTS)) == INVALID_SOCKET) {
-			std::cout << "Create socket failed." << std::endl;
+			CLOG(INFO, "P2P") << "Create socket failed.";;
 		}
 		struct sockaddr_in serverAddress;
 		memset(&serverAddress, 0, sizeof(sockaddr_in));
@@ -87,30 +87,30 @@ bool leftP2P::GetServerIp(char* buf, int len) {
 		serverAddress.sin_family = AF_INET;
 		serverAddress.sin_port = htons(port);
 		if (connect(ClientSocket, (sockaddr*)&serverAddress, sizeof(serverAddress)) == SOCKET_ERROR) {
-			std::cout << "Connect failed." << std::endl;
+			CLOG(INFO, "P2P") << "Connect failed.";;
 			break;
 		}
 		char buf[4096];
 		memset(buf, 0, sizeof(buf));
 		while (1) {
-			std::cout << ">";
+			CLOG(INFO, "P2P") << ">";
 			std::cin.getline(buf, 4069, '\n');
 			int bufLen = strlen(buf);
 			buf[bufLen] = leftP2P::CountVerifyPacket(buf, bufLen);
-			//std::cout << std::hex << "bufLen: " << bufLen + 1 << std::endl;
-			//std::cout << "Verify: "
-			//	<< (int)leftP2P::CountVerifyPacket(buf, bufLen) << std::dec << std::endl;
+			//CLOG(INFO, "P2P") << std::hex << "bufLen: " << bufLen + 1;;
+			//CLOG(INFO, "P2P") << "Verify: "
+			//	<< (int)leftP2P::CountVerifyPacket(buf, bufLen) << std::dec;;
 			//buf[bufLen + 1] = '\0';
 			if (send(ClientSocket, buf, bufLen + 1, 0) == SOCKET_ERROR) {
-				std::cout << "Send failed" << std::endl;
+				CLOG(INFO, "P2P") << "Send failed";;
 				break;
 			}
 			int bytes;
 			if ((bytes = recv(ClientSocket, buf, sizeof(buf), 0)) == SOCKET_ERROR) {
-				std::cout << "Recv failed" << std::endl;
+				CLOG(INFO, "P2P") << "Recv failed";;
 				break;
 			}
-			std::cout << "<< " << buf << std::endl;
+			CLOG(INFO, "P2P") << "<< " << buf;;
 
 		}
 

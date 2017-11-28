@@ -17,12 +17,14 @@ ${MYSQL_INCLUDE_DIR}
 AUX_SOURCE_DIRECTORY(src DIR_SRCS)
 AUX_SOURCE_DIRECTORY(src/LeftMyCodes DIR_MYCODES)
 AUX_SOURCE_DIRECTORY(src/CompleteConfidence DIR_CC)
+AUX_SOURCE_DIRECTORY(src/easylogging DIR_EL)
 
 # Set environement variable
 SET(_MATH
 ${DIR_SRCS}
 ${DIR_MYCODES}
 ${DIR_CC}
+${DIR_EL}
 )
 
 # Add excutable file

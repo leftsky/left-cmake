@@ -8,6 +8,7 @@
 
 #include "CompleteConfidence\Socket.h"
 #include "LeftMyCodes\MyCodes.h"
+#include "easylogging/easylogging++.h"
 
 ServerList Head = { NULL, NULL, 0, NULL };
 
@@ -20,8 +21,8 @@ namespace {
 		time_t TSec = time(NULL);
 		inet_ntop(AF_INET, IPFromAddr(CltInfo.ClientAddress), ip, 16);
 
-		std::cout << "Accept " << ip << ":" << port << std::endl;
-		std::cout << "Now time: " << leftName::GetTimeStr(TimeStr, 30) << std::endl;
+		CLOG(INFO, "P2P") << "Accept " << ip << ":" << port;;
+		CLOG(INFO, "P2P") << "Now time: " << leftName::GetTimeStr(TimeStr, 30);;
 		int nNetTimeout = 1;// Socket³¬Ê±Ê±³¤
 		setsockopt(CltInfo.Socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetTimeout, sizeof(int));
 		char buf[4096];
@@ -33,45 +34,45 @@ namespace {
 			memset(buf, 0, sizeof(buf));
 			bytes = recv(CltInfo.Socket, buf, sizeof(buf), 0);
 			if (bytes == 0) {
-				std::cout << "Cut because bytes is zero" << std::endl;
+				CLOG(INFO, "P2P") << "Cut because bytes is zero";;
 				break;
 			}
 			if (bytes == SOCKET_ERROR) {
 				if (WSAGetLastError() == WSAETIMEDOUT) { Sleep(1); continue; }
 				else {
-					std::cout << "Cut because err is not WSAETIMEDOUT" << std::endl;
+					CLOG(INFO, "P2P") << "Cut because err is not WSAETIMEDOUT";;
 					break;
 				}
 			}
 			if (!leftP2P::CountVerifyPacket(buf, bytes)) {
-				std::cout << "Verify right" << std::endl;
+				CLOG(INFO, "P2P") << "Verify right";;
 				buf[bytes - 1] = '\0';
-				std::cout << ip << ":" << port << " <<< " << buf << std::endl;
+				CLOG(INFO, "P2P") << ip << ":" << port << " <<< " << buf;;
 				if (bytes > 10)
 					leftP2P::RunSocketOrder(buf, bytes - 1, ip, 16, &port);
 				char rt[512];
-				sprintf(rt, "%s:%d", ip, port);
-				std::cout << "Send msg: " << rt << std::endl;
+				snprintf(rt, 512, "%s:%d", ip, port);
+				CLOG(INFO, "P2P") << "Send msg: " << rt;;
 				if (send(CltInfo.Socket, rt, strlen(rt), 0) == SOCKET_ERROR) {
-					std::cout << "Send failed" << std::endl;
+					CLOG(INFO, "P2P") << "Send failed";;
 					break;
 				}
 			}
 			else {
-				std::cout << std::hex << "Read: " << (int)buf[bytes - 1] << std::endl;
-				std::cout << "Verify: " <<
-					(int)leftP2P::CountVerifyPacket(buf, bytes - 1) << std::endl;
-				std::cout << "bytes: " << bytes << std::dec << std::endl;
-				std::cout << "Verify not" << std::endl;
+				CLOG(INFO, "P2P") << std::hex << "Read: " << (int)buf[bytes - 1];;
+				CLOG(INFO, "P2P") << "Verify: " <<
+					(int)leftP2P::CountVerifyPacket(buf, bytes - 1);;
+				CLOG(INFO, "P2P") << "bytes: " << bytes << std::dec;;
+				CLOG(INFO, "P2P") << "Verify not";;
 			}
 			//if (send(CltInfo.Socket, "Hi client", (int)strlen("Hi client"), 0) == SOCKET_ERROR) {
-			//	std::cout << "Send failed" << std::endl;
+			//	CLOG(INFO, "P2P") << "Send failed";;
 			//	break;
 			//}
 		}
 		closesocket(CltInfo.Socket);
-		std::cout << "lost " << ip << ":" << port << std::endl;
-		std::cout << "Now time: " << leftName::GetTimeStr(TimeStr, 30) << std::endl;
+		CLOG(INFO, "P2P") << "lost " << ip << ":" << port;;
+		CLOG(INFO, "P2P") << "Now time: " << leftName::GetTimeStr(TimeStr, 30);;
 		return 0;
 	}
 }
@@ -80,11 +81,11 @@ bool leftP2P::RunSocketOrder(
 	char* buf, int bufLen, char* ip, int ipLen, unsigned short* port) {
 	pServerList p = &Head;
 	char* LinkName = new char[bufLen];
-	sprintf(LinkName, strstr(buf, ":") + 1);
+	snprintf(LinkName, bufLen, strstr(buf, ":") + 1);
 	if (strstr(buf, "Register") == buf) {
-		std::cout << "Get a Regisger" << std::endl;
+		CLOG(INFO, "P2P") << "Get a Regisger";;
 		char* ipSave = new char[ipLen + 1];
-		sprintf(ipSave, ip);
+		snprintf(ipSave, ipLen + 1, ip);
 		pServerList SerInfo = new ServerList;
 		SerInfo->LinkIp = ipSave;
 		SerInfo->LinkName = LinkName;
@@ -93,13 +94,13 @@ bool leftP2P::RunSocketOrder(
 		p->Next = SerInfo;
 	}
 	else if (strstr(buf, "AskLink") == buf) {
-		std::cout << "Get a AskLink" << std::endl;
+		CLOG(INFO, "P2P") << "Get a AskLink";;
 		p = p->Next;
 		while (p && p->LinkName) {
 			if (!strcmp(LinkName, p->LinkName)) {
-				std::cout << "Get serverInfo ip: " << p->LinkIp
-					<< "\t port: " << p->Port << std::endl;
-				sprintf(ip, p->LinkIp);
+				CLOG(INFO, "P2P") << "Get serverInfo ip: " << p->LinkIp
+					<< "\t port: " << p->Port;;
+				snprintf(ip, ipLen, p->LinkIp);
 				*port = p->Port;
 				return true;
 			}
@@ -118,15 +119,15 @@ bool leftP2P::GetServerLink(void* Key, short way) {
 }
 
 int leftP2P::PublicNetWorkServerMain() {
-	std::cout << "Entry leftP2P::PublicNetWorkServerMain()" << std::endl;
+	CLOG(INFO, "P2P") << "Entry leftP2P::PublicNetWorkServerMain()";;
 	do {
 		if (LeftSocket::InitializeSocket()) {
-			std::cout << "InitializeSocket failed." << std::endl;
+			CLOG(INFO, "P2P") << "InitializeSocket failed.";;
 			break;
 		}
 		LeftSokt ServerSocket;
 		if ((ServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_HOPOPTS)) == INVALID_SOCKET) {
-			std::cout << "Create socket failed." << std::endl;
+			CLOG(INFO, "P2P") << "Create socket failed.";;
 		}
 		struct sockaddr_in ServerAddress;
 		memset(&ServerAddress, 0, sizeof(sockaddr_in));
@@ -137,15 +138,15 @@ int leftP2P::PublicNetWorkServerMain() {
 
 		if (bind(ServerSocket, (sockaddr*)&ServerAddress,
 			sizeof(ServerAddress)) == SOCKET_ERROR) {
-			std::cout << "Server bind failed." << std::endl;
+			CLOG(INFO, "P2P") << "Server bind failed.";;
 		}
 
 		if (listen(ServerSocket, SOMAXCONN) == SOCKET_ERROR) {
-			std::cout << "Listen failed." << std::endl;
+			CLOG(INFO, "P2P") << "Listen failed.";;
 			break;
 		}
 
-		std::cout << "Bind at " << NSIP << ":" << NSPORT << std::endl;
+		CLOG(INFO, "P2P") << "Bind at " << NSIP << ":" << NSPORT;;
 
 		LeftSokt ClientSocket;
 		struct sockaddr_in ClientAddress;
@@ -156,7 +157,7 @@ int leftP2P::PublicNetWorkServerMain() {
 		for (;;) {
 			if ((ClientSocket = accept(ServerSocket,
 				(sockaddr*)&ClientAddress, &AddrLen)) == INVALID_SOCKET) {
-				std::cout << "Accept failed." << std::endl;
+				CLOG(INFO, "P2P") << "Accept failed.";;
 				break;
 			}
 			CltInfo = new ClientInfo;

@@ -19,7 +19,7 @@
 
 
 char *CCWebSocket::CountMagicStr(char *AskKey, char *AnswerKey, int Len) {
-	//std::cout << strlen(MagicKey) << std::endl;
+	//CLOG(INFO, "P2P") << strlen(MagicKey);;
 	if (strlen(AskKey) != WEBSOCKET_KEY_LEN)
 		return NULL;
 	char request[WEBSOCKET_KEY_LEN + MAGIC_STR_LEN + 1];
@@ -36,7 +36,7 @@ char *CCWebSocket::CountMagicStr(char *AskKey, char *AnswerKey, int Len) {
 	}
 	std::string base20 = base64_encode(
 		reinterpret_cast<const unsigned char*>(message_digest), 20);
-	//std::cout << "Magic str: " << base20.c_str() << std::endl;
+	//CLOG(INFO, "P2P") << "Magic str: " << base20.c_str();;
 	snprintf(AnswerKey, Len, base20.c_str());
 	return AnswerKey;
 }
@@ -58,7 +58,7 @@ char *CCWebSocket::GetAnswerStr(char *PacketAsk, char *PacketAnswer, int Len) {
 
 char *CCWebSocket::DecipheringStr(
 	const char *CipherText, int TextLen, char key[], char *DecipheringStr, int DhStrLen) {
-	//std::cout << "CipherText: " << CipherText << std::endl;
+	//CLOG(INFO, "P2P") << "CipherText: " << CipherText;;
 	if (DhStrLen <= TextLen)
 		return NULL;
 	DecipheringStr[TextLen] = '\0';
@@ -67,7 +67,7 @@ char *CCWebSocket::DecipheringStr(
 		int j = i % 4;
 		DecipheringStr[i] = CipherText[i] ^ key[j];
 	}
-	//std::cout << "DecipheringStr: " << DecipheringStr << std::endl;
+	//CLOG(INFO, "P2P") << "DecipheringStr: " << DecipheringStr;;
 
 	return DecipheringStr;
 }

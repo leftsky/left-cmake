@@ -26,7 +26,7 @@ namespace leftName {
 			NULL, GetLastError(),
 			MAKELANGID(LANG_CHINESE_SIMPLIFIED, SUBLANG_CHINESE_SIMPLIFIED),
 			(LPTSTR)&lpMsgBuf, 0, NULL);
-		std::wcout << (WCHAR*)lpMsgBuf << std::endl;
+		std::wcout << (WCHAR*)lpMsgBuf;;
 		LocalFree(lpMsgBuf);
 	}
 
@@ -165,7 +165,7 @@ namespace leftName {
 			p->Key = key;
 			p->Value = value;
 			InfoHead = InfoHead->Next;
-			//std::cout << "Check info >>> " << p->Key << ":" << p->Value << std::endl;
+			//CLOG(INFO, "P2P") << "Check info >>> " << p->Key << ":" << p->Value;;
 		}
 		ini.close();
 		return LEFT_SUCCESS;
