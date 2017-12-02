@@ -1,4 +1,4 @@
-// SocketCurrency.cpp: 定义控制台应用程序的入口点。
+﻿// SocketCurrency.cpp: 定义控制台应用程序的入口点。
 //
 
 #include <stdio.h>
@@ -9,14 +9,12 @@
 #include "CompleteConfidence/Socket.h"
 #include "LeftMyCodes/MyCodes.h"
 
-#define SERVER 0
-#define CLIENT 1
+
 
 typedef struct _CLIENT_INFO {
 	sockaddr_in ClientAddress;
 	LeftSokt	Socket;
 } ClientInfo, *pClientInfo;
-
 
 LeftThrReturn OneConn(LeftThrArgv pCltIf) {
 	ClientInfo CltInfo = *(pClientInfo)pCltIf;
@@ -42,9 +40,10 @@ LeftThrReturn OneConn(LeftThrArgv pCltIf) {
 	LeftCloseSocket(CltInfo.Socket);
 	std::cout << "lost " << ip << ":" << port << std::endl;
 	std::cout << "Now time: " << leftName::GetTimeStr(time, 20) << std::endl;
+
+	EndThread;
 	return 0;
 }
-
 
 int server(char* ip, short port) {
 	using namespace std;
@@ -65,7 +64,7 @@ int server(char* ip, short port) {
 		inet_pton(AF_INET, ip, IPFromAddr(serverAddress));
 		serverAddress.sin_port = htons(port);
 
-		if (bind(serverSocket, (sockaddr*)&serverAddress, 
+		if (bind(serverSocket, (sockaddr*)&serverAddress,
 			sizeof(serverAddress)) == SOCKET_ERROR) {
 			cout << "Bind failed." << endl;
 			break;
@@ -93,7 +92,6 @@ int server(char* ip, short port) {
 			CltInfo->ClientAddress = clientAddress;
 			CltInfo->Socket = clientSocket;
 			CURRENCY_StartThread(OneConn, (LeftThrArgv)CltInfo, Id);
-			
 		}
 
 	} while (false);
@@ -151,25 +149,24 @@ int main(int argc, char* argv[]) {
 	using namespace std;
 
 	short port;
-	int mode;
 	char ip[20];
 	switch (argc) {
 	case 4:
-		if (!strcmp(argv[1], "--s")) mode = SERVER;
-		else if (!strcmp(argv[1], "--c")) mode = CLIENT;
-		else break;
 		snprintf(ip, 20, argv[2]);
 		port = atoi(argv[3]);
 		cout << "You chose " << ip << ":" << port << endl;
-		cout << "I will try to build it like a ";
-		if (mode == SERVER) { cout << "server" << endl; return server(ip, port); }
-		else if (mode == CLIENT) { cout << "client" << endl; return client(ip, port); }
-		else { cout << "Disable to here!Program error!" << endl; return 0; }
-		return 0;
-	default:
-		cout << "TCPTest Version 1.0 (c) left" << endl;
-		cout << "Use like TCPTest mode(--s/--c) ip port" << endl;
-		return 0;
+		cout << "I'll try to build it like a ";
+		switch (hash_(argv[1])) {
+		case "--s"_hash: cout << "server" << endl; return server(ip, port);
+		case "--c"_hash: cout << "client" << endl; return client(ip, port);
+		default: break;
+		}
+		break;
+	default: break;
 	}
+
+	cout << "TCPTest Version 1.0.1 (c) left" << endl;
+	cout << "Use like TCPTest mode(--s/--c) ip port" << endl;
+	return -1;
 
 }

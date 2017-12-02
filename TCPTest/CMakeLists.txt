@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.2)
 # Appoint the name of project
 PROJECT(TCPTest)
 
+# support C++ 11
+add_compile_options(-std=c++11)
+
 # Appoint the head file path
 INCLUDE_DIRECTORIES(
 include
@@ -11,8 +14,8 @@ include
 
 # Appoint the source directory
 AUX_SOURCE_DIRECTORY(src DIR_SRCS)
-AUX_SOURCE_DIRECTORY(src/LeftMyCodes DIR_MYCODES)
-AUX_SOURCE_DIRECTORY(src/CompleteConfidence DIR_CC)
+AUX_SOURCE_DIRECTORY(include/LeftMyCodes DIR_MYCODES)
+AUX_SOURCE_DIRECTORY(include/CompleteConfidence DIR_CC)
 
 # Set environement variable
 SET(_MATH
