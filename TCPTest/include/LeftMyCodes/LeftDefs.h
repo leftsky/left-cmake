@@ -5,7 +5,7 @@
 #ifdef _WIN32
 #define LEFT_OS_WIN
 #endif
-#ifdef linux
+#ifdef __linux__
 #define LEFT_OS_LINUX				1991
 #endif
 

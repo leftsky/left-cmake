@@ -5,7 +5,7 @@
 #ifdef _WIN32
 #define CC_OS_WIN
 #endif
-#ifdef linux
+#ifdef __linux__
 #define CC_OS_LINUX				0x1991
 #endif
 

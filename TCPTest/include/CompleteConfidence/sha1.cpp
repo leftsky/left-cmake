@@ -1,41 +1,41 @@
 ﻿
 
 /*
-*  sha1.cpp
+ * sha1.cpp
 *
-*  Copyright (C) 1998, 2009
-*  Paul E. Jones <paulej@packetizer.com>
-*  All Rights Reserved.
+ * Copyright (C) 1998, 2009
+ * Paul E. Jones <paulej@packetizer.com>
+ * All Rights Reserved.
 *
 *****************************************************************************
-*  $Id: sha1.cpp 12 2009-06-22 19:34:25Z paulej $
+ * $Id: sha1.cpp 12 2009-06-22 19:34:25Z paulej $
 *****************************************************************************
 *
-*  Description:
-*      This class implements the Secure Hashing Standard as defined
-*      in FIPS PUB 180-1 published April 17, 1995.
+ * Description:
+ *     This class implements the Secure Hashing Standard as defined
+ *     in FIPS PUB 180-1 published April 17, 1995.
 *
-*      The Secure Hashing Standard, which uses the Secure Hashing
-*      Algorithm (SHA), produces a 160-bit message digest for a
-*      given data stream.  In theory, it is highly improbable that
-*      two messages will produce the same message digest.  Therefore,
-*      this algorithm can serve as a means of providing a "fingerprint"
-*      for a message.
+ *     The Secure Hashing Standard, which uses the Secure Hashing
+ *     Algorithm (SHA), produces a 160-bit message digest for a
+ *     given data stream.  In theory, it is highly improbable that
+ *     two messages will produce the same message digest.  Therefore,
+ *     this algorithm can serve as a means of providing a "fingerprint"
+ *     for a message.
 *
-*  Portability Issues:
-*      SHA-1 is defined in terms of 32-bit "words".  This code was
-*      written with the expectation that the processor has at least
-*      a 32-bit machine word size.  If the machine word size is larger,
-*      the code should still function properly.  One caveat to that
-*      is that the input functions taking characters and character arrays
-*      assume that only 8 bits of information are stored in each character.
+ * Portability Issues:
+ *     SHA-1 is defined in terms of 32-bit "words".  This code was
+ *     written with the expectation that the processor has at least
+ *     a 32-bit machine word size.  If the machine word size is larger,
+ *     the code should still function properly.  One caveat to that
+ *     is that the input functions taking characters and character arrays
+ *     assume that only 8 bits of information are stored in each character.
 *
-*  Caveats:
-*      SHA-1 is designed to work with messages less than 2^64 bits long.
-*      Although SHA-1 allows a message digest to be generated for
-*      messages of any number of bits less than 2^64, this implementation
-*      only works with messages with a length that is a multiple of 8
-*      bits.
+ * Caveats:
+ *     SHA-1 is designed to work with messages less than 2^64 bits long.
+ *     Although SHA-1 allows a message digest to be generated for
+ *     messages of any number of bits less than 2^64, this implementation
+ *     only works with messages with a length that is a multiple of 8
+ *     bits.
 *
 */
 
@@ -44,18 +44,18 @@
 
 
 /*
-*  SHA1
+ * SHA1
 *
-*  Description:
-*      This is the constructor for the sha1 class.
+ * Description:
+ *     This is the constructor for the sha1 class.
 *
-*  Parameters:
-*      None.
+ * Parameters:
+ *     None.
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
+ * Comments:
 *
 */
 SHA1::SHA1()
@@ -64,18 +64,18 @@ SHA1::SHA1()
 }
 
 /*
-*  ~SHA1
+ * ~SHA1
 *
-*  Description:
-*      This is the destructor for the sha1 class
+ * Description:
+ *     This is the destructor for the sha1 class
 *
-*  Parameters:
-*      None.
+ * Parameters:
+ *     None.
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
+ * Comments:
 *
 */
 SHA1::~SHA1()
@@ -84,19 +84,19 @@ SHA1::~SHA1()
 }
 
 /*
-*  Reset
+ * Reset
 *
-*  Description:
-*      This function will initialize the sha1 class member variables
-*      in preparation for computing a new message digest.
+ * Description:
+ *     This function will initialize the sha1 class member variables
+ *     in preparation for computing a new message digest.
 *
-*  Parameters:
-*      None.
+ * Parameters:
+ *     None.
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
+ * Comments:
 *
 */
 void SHA1::Reset()
@@ -116,21 +116,21 @@ void SHA1::Reset()
 }
 
 /*
-*  Result
+ * Result
 *
-*  Description:
-*      This function will return the 160-bit message digest into the
-*      array provided.
+ * Description:
+ *     This function will return the 160-bit message digest into the
+ *     array provided.
 *
-*  Parameters:
-*      message_digest_array: [out]
-*          This is an array of five unsigned integers which will be filled
-*          with the message digest that has been computed.
+ * Parameters:
+ *     message_digest_array: [out]
+ *         This is an array of five unsigned integers which will be filled
+ *         with the message digest that has been computed.
 *
-*  Returns:
-*      True if successful, false if it failed.
+ * Returns:
+ *     True if successful, false if it failed.
 *
-*  Comments:
+ * Comments:
 *
 */
 bool SHA1::Result(unsigned *message_digest_array)
@@ -157,21 +157,21 @@ bool SHA1::Result(unsigned *message_digest_array)
 }
 
 /*
-*  Input
+ * Input
 *
-*  Description:
-*      This function accepts an array of octets as the next portion of
-*      the message.
+ * Description:
+ *     This function accepts an array of octets as the next portion of
+ *     the message.
 *
-*  Parameters:
-*      message_array: [in]
-*          An array of characters representing the next portion of the
-*          message.
+ * Parameters:
+ *     message_array: [in]
+ *         An array of characters representing the next portion of the
+ *         message.
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
+ * Comments:
 *
 */
 void SHA1::Input(const unsigned char *message_array,
@@ -214,23 +214,23 @@ void SHA1::Input(const unsigned char *message_array,
 }
 
 /*
-*  Input
+ * Input
 *
-*  Description:
-*      This function accepts an array of octets as the next portion of
-*      the message.
+ * Description:
+ *     This function accepts an array of octets as the next portion of
+ *     the message.
 *
-*  Parameters:
-*      message_array: [in]
-*          An array of characters representing the next portion of the
-*          message.
-*      length: [in]
-*          The length of the message_array
+ * Parameters:
+ *     message_array: [in]
+ *         An array of characters representing the next portion of the
+ *         message.
+ *     length: [in]
+ *         The length of the message_array
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
+ * Comments:
 *
 */
 void SHA1::Input(const char  *message_array,
@@ -240,19 +240,19 @@ void SHA1::Input(const char  *message_array,
 }
 
 /*
-*  Input
+ * Input
 *
-*  Description:
-*      This function accepts a single octets as the next message element.
+ * Description:
+ *     This function accepts a single octets as the next message element.
 *
-*  Parameters:
-*      message_element: [in]
-*          The next octet in the message.
+ * Parameters:
+ *     message_element: [in]
+ *         The next octet in the message.
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
+ * Comments:
 *
 */
 void SHA1::Input(unsigned char message_element)
@@ -261,19 +261,19 @@ void SHA1::Input(unsigned char message_element)
 }
 
 /*
-*  Input
+ * Input
 *
-*  Description:
-*      This function accepts a single octet as the next message element.
+ * Description:
+ *     This function accepts a single octet as the next message element.
 *
-*  Parameters:
-*      message_element: [in]
-*          The next octet in the message.
+ * Parameters:
+ *     message_element: [in]
+ *         The next octet in the message.
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
+ * Comments:
 *
 */
 void SHA1::Input(char message_element)
@@ -282,21 +282,21 @@ void SHA1::Input(char message_element)
 }
 
 /*
-*  operator<<
+ * operator<<
 *
-*  Description:
-*      This operator makes it convenient to provide character strings to
-*      the SHA1 object for processing.
+ * Description:
+ *     This operator makes it convenient to provide character strings to
+ *     the SHA1 object for processing.
 *
-*  Parameters:
-*      message_array: [in]
-*          The character array to take as input.
+ * Parameters:
+ *     message_array: [in]
+ *         The character array to take as input.
 *
-*  Returns:
-*      A reference to the SHA1 object.
+ * Returns:
+ *     A reference to the SHA1 object.
 *
-*  Comments:
-*      Each character is assumed to hold 8 bits of information.
+ * Comments:
+ *     Each character is assumed to hold 8 bits of information.
 *
 */
 SHA1& SHA1::operator<<(const char *message_array)
@@ -313,21 +313,21 @@ SHA1& SHA1::operator<<(const char *message_array)
 }
 
 /*
-*  operator<<
+ * operator<<
 *
-*  Description:
-*      This operator makes it convenient to provide character strings to
-*      the SHA1 object for processing.
+ * Description:
+ *     This operator makes it convenient to provide character strings to
+ *     the SHA1 object for processing.
 *
-*  Parameters:
-*      message_array: [in]
-*          The character array to take as input.
+ * Parameters:
+ *     message_array: [in]
+ *         The character array to take as input.
 *
-*  Returns:
-*      A reference to the SHA1 object.
+ * Returns:
+ *     A reference to the SHA1 object.
 *
-*  Comments:
-*      Each character is assumed to hold 8 bits of information.
+ * Comments:
+ *     Each character is assumed to hold 8 bits of information.
 *
 */
 SHA1& SHA1::operator<<(const unsigned char *message_array)
@@ -344,20 +344,20 @@ SHA1& SHA1::operator<<(const unsigned char *message_array)
 }
 
 /*
-*  operator<<
+ * operator<<
 *
-*  Description:
-*      This function provides the next octet in the message.
+ * Description:
+ *     This function provides the next octet in the message.
 *
-*  Parameters:
-*      message_element: [in]
-*          The next octet in the message
+ * Parameters:
+ *     message_element: [in]
+ *         The next octet in the message
 *
-*  Returns:
-*      A reference to the SHA1 object.
+ * Returns:
+ *     A reference to the SHA1 object.
 *
-*  Comments:
-*      The character is assumed to hold 8 bits of information.
+ * Comments:
+ *     The character is assumed to hold 8 bits of information.
 *
 */
 SHA1& SHA1::operator<<(const char message_element)
@@ -368,20 +368,20 @@ SHA1& SHA1::operator<<(const char message_element)
 }
 
 /*
-*  operator<<
+ * operator<<
 *
-*  Description:
-*      This function provides the next octet in the message.
+ * Description:
+ *     This function provides the next octet in the message.
 *
-*  Parameters:
-*      message_element: [in]
-*          The next octet in the message
+ * Parameters:
+ *     message_element: [in]
+ *         The next octet in the message
 *
-*  Returns:
-*      A reference to the SHA1 object.
+ * Returns:
+ *     A reference to the SHA1 object.
 *
-*  Comments:
-*      The character is assumed to hold 8 bits of information.
+ * Comments:
+ *     The character is assumed to hold 8 bits of information.
 *
 */
 SHA1& SHA1::operator<<(const unsigned char message_element)
@@ -392,22 +392,22 @@ SHA1& SHA1::operator<<(const unsigned char message_element)
 }
 
 /*
-*  ProcessMessageBlock
+ * ProcessMessageBlock
 *
-*  Description:
-*      This function will process the next 512 bits of the message
-*      stored in the Message_Block array.
+ * Description:
+ *     This function will process the next 512 bits of the message
+ *     stored in the Message_Block array.
 *
-*  Parameters:
-*      None.
+ * Parameters:
+ *     None.
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
-*      Many of the variable names in this function, especially the single
-*      character names, were used because those were the names used
-*      in the publication.
+ * Comments:
+ *     Many of the variable names in this function, especially the single
+ *     character names, were used because those were the names used
+ *     in the publication.
 *
 */
 void SHA1::ProcessMessageBlock()
@@ -424,14 +424,14 @@ void SHA1::ProcessMessageBlock()
 	unsigned    A, B, C, D, E;              // Word buffers
 
 											/*
-											*  Initialize the first 16 words in the array W
+											 * Initialize the first 16 words in the array W
 											*/
 	for (t = 0; t < 16; t++)
 	{
-		W[t] = ((unsigned)Message_Block[t * 4]) << 24;
-		W[t] |= ((unsigned)Message_Block[t * 4 + 1]) << 16;
-		W[t] |= ((unsigned)Message_Block[t * 4 + 2]) << 8;
-		W[t] |= ((unsigned)Message_Block[t * 4 + 3]);
+		W[t] = ((unsigned)Message_Block[t  *4]) << 24;
+		W[t] |= ((unsigned)Message_Block[t  *4 + 1]) << 16;
+		W[t] |= ((unsigned)Message_Block[t  *4 + 2]) << 8;
+		W[t] |= ((unsigned)Message_Block[t  *4 + 3]);
 	}
 
 	for (t = 16; t < 80; t++)
@@ -500,32 +500,32 @@ void SHA1::ProcessMessageBlock()
 }
 
 /*
-*  PadMessage
+ * PadMessage
 *
-*  Description:
-*      According to the standard, the message must be padded to an even
-*      512 bits.  The first padding bit must be a '1'.  The last 64 bits
-*      represent the length of the original message.  All bits in between
-*      should be 0.  This function will pad the message according to those
-*      rules by filling the message_block array accordingly.  It will also
-*      call ProcessMessageBlock() appropriately.  When it returns, it
-*      can be assumed that the message digest has been computed.
+ * Description:
+ *     According to the standard, the message must be padded to an even
+ *     512 bits.  The first padding bit must be a '1'.  The last 64 bits
+ *     represent the length of the original message.  All bits in between
+ *     should be 0.  This function will pad the message according to those
+ *     rules by filling the message_block array accordingly.  It will also
+ *     call ProcessMessageBlock() appropriately.  When it returns, it
+ *     can be assumed that the message digest has been computed.
 *
-*  Parameters:
-*      None.
+ * Parameters:
+ *     None.
 *
-*  Returns:
-*      Nothing.
+ * Returns:
+ *     Nothing.
 *
-*  Comments:
+ * Comments:
 *
 */
 void SHA1::PadMessage()
 {
 	/*
-	*  Check to see if the current message block is too small to hold
-	*  the initial padding bits and length.  If so, we will pad the
-	*  block, process it, and then continue padding into a second block.
+	 * Check to see if the current message block is too small to hold
+	 * the initial padding bits and length.  If so, we will pad the
+	 * block, process it, and then continue padding into a second block.
 	*/
 	if (Message_Block_Index > 55)
 	{
@@ -553,7 +553,7 @@ void SHA1::PadMessage()
 	}
 
 	/*
-	*  Store the message length as the last 8 octets
+	 * Store the message length as the last 8 octets
 	*/
 	Message_Block[56] = (Length_High >> 24) & 0xFF;
 	Message_Block[57] = (Length_High >> 16) & 0xFF;
@@ -569,21 +569,21 @@ void SHA1::PadMessage()
 
 
 /*
-*  CircularShift
+ * CircularShift
 *
-*  Description:
-*      This member function will perform a circular shifting operation.
+ * Description:
+ *     This member function will perform a circular shifting operation.
 *
-*  Parameters:
-*      bits: [in]
-*          The number of bits to shift (1-31)
-*      word: [in]
-*          The value to shift (assumes a 32-bit integer)
+ * Parameters:
+ *     bits: [in]
+ *         The number of bits to shift (1-31)
+ *     word: [in]
+ *         The value to shift (assumes a 32-bit integer)
 *
-*  Returns:
-*      The shifted value.
+ * Returns:
+ *     The shifted value.
 *
-*  Comments:
+ * Comments:
 *
 */
 unsigned SHA1::CircularShift(int bits, unsigned word)

@@ -4,6 +4,9 @@
 #include <stdio.h>
 //#include <iostream>
 #include <memory.h>
+#ifdef CC_OS_LINUX
+#include <arpa/inet.h>
+#endif
 
 //using namespace std;
 
@@ -15,7 +18,7 @@
 #include "base64.h"
 
 
-char* CCWebSocket::CountMagicStr(char* AskKey, char* AnswerKey, int Len) {
+char *CCWebSocket::CountMagicStr(char *AskKey, char *AnswerKey, int Len) {
 	//std::cout << strlen(MagicKey) << std::endl;
 	if (strlen(AskKey) != WEBSOCKET_KEY_LEN)
 		return NULL;
@@ -38,8 +41,8 @@ char* CCWebSocket::CountMagicStr(char* AskKey, char* AnswerKey, int Len) {
 	return AnswerKey;
 }
 
-char* CCWebSocket::GetAnswerStr(char* PacketAsk, char* PacketAnswer, int Len) {
-	char* webKey = (char*)strstr(PacketAsk, "Sec-WebSocket-Key");
+char *CCWebSocket::GetAnswerStr(char *PacketAsk, char *PacketAnswer, int Len) {
+	char *webKey = (char*)strstr(PacketAsk, "Sec-WebSocket-Key");
 	if (webKey == NULL)
 		return NULL;
 	char AskKey[WEBSOCKET_KEY_LEN + 1];
@@ -53,8 +56,8 @@ char* CCWebSocket::GetAnswerStr(char* PacketAsk, char* PacketAnswer, int Len) {
 	return PacketAnswer;
 }
 
-char* CCWebSocket::DecipheringStr(
-	const char* CipherText, int TextLen, char key[], char* DecipheringStr, int DhStrLen) {
+char *CCWebSocket::DecipheringStr(
+	const char *CipherText, int TextLen, char key[], char *DecipheringStr, int DhStrLen) {
 	//std::cout << "CipherText: " << CipherText << std::endl;
 	if (DhStrLen <= TextLen)
 		return NULL;
@@ -70,8 +73,8 @@ char* CCWebSocket::DecipheringStr(
 }
 
 
-char* CCWebSocket::PackageHead(
-	const char* words, int Len, char* Answer, int AnswerLen) {
+char *CCWebSocket::PackageHead(
+	const char *words, int Len, char *Answer, int AnswerLen) {
 		if (Len < 0)
 			return NULL;
 		memset(Answer, 0, AnswerLen);
